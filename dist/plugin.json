@@ -1,0 +1,21 @@
+{
+  "type": "panel",
+  "name": "DE zip heatmap",
+  "id": "id-de-zip-heatmap",
+  "dataFormats": ["table"],
+  "info": {
+    "description": "DE zip heatmap",
+    "author": {
+      "name": "Nam Le"
+    },
+    "keywords": [],
+    "screenshots": [],
+    "version": "1.0.0",
+    "updated": "2021-04-08"
+  },
+
+  "dependencies": {
+    "grafanaVersion": "6.3.x",
+    "plugins": []
+  }
+}
