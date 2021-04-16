@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import { PanelProps } from '@grafana/data';
-import { PanelOptions, Frame } from 'types';
+import { PanelOptions } from 'types';
 import { Map, View } from 'ol';
 import XYZ from 'ol/source/XYZ';
 import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
@@ -62,10 +62,8 @@ export class MainPanel extends PureComponent<Props, State> {
       this.map.addLayer(this.randomTile);
     }
 
-    if (this.props.data.series.length > 0) {
-      this.heatLayer = createHeatLayer(this.props.data.series as Frame[]);
-      this.map.addLayer(this.heatLayer);
-    }
+    this.heatLayer = createHeatLayer();
+    this.map.addLayer(this.heatLayer);
 
     const hoverInteraction = new Select({
       condition: pointerMove,
@@ -99,12 +97,6 @@ export class MainPanel extends PureComponent<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    if (prevProps.data.series !== this.props.data.series) {
-      this.map.removeLayer(this.heatLayer);
-      this.heatLayer = createHeatLayer(this.props.data.series as Frame[]);
-      this.map.addLayer(this.heatLayer);
-    }
-
     if (prevProps.options.tile_url !== this.props.options.tile_url) {
       if (this.randomTile) {
         this.map.removeLayer(this.randomTile);

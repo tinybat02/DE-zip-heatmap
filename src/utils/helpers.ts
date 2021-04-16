@@ -3,10 +3,10 @@ import VectorSource from 'ol/source/Vector';
 import Feature from 'ol/Feature';
 import Polygon from 'ol/geom/Polygon';
 import { Style, Fill } from 'ol/style';
-import { Frame } from '../types';
+import zipData from './zipdata';
 import { zip_polygons } from './zipcode';
 
-type ZipKey = keyof typeof zip_polygons;
+type ZipKey = keyof typeof zipData;
 
 const percentageToHsl = (percentage: number) => {
   const hue = percentage * -120 + 120;
@@ -30,18 +30,15 @@ const createPolygon = (coordinates: number[][][], value: string, color: string) 
   return polygonFeature;
 };
 
-export const createHeatLayer = (series: Frame[]) => {
-  const stores: string[] = [];
+export const createHeatLayer = () => {
   const assignValueToStore: { [key: string]: number } = {};
   const assignValueToStoreLog: { [key: string]: number } = {};
 
-  series.map((item) => {
-    const sumValue = item.fields[0].values.buffer.reduce((sum, elm) => sum + elm, 0);
-    if (item.name /* && sumValue > 3 */) {
-      stores.push(item.name);
-      assignValueToStore[item.name] = sumValue;
-      assignValueToStoreLog[item.name] = Math.log2(sumValue);
-    }
+  Object.keys(zipData).map((zip) => {
+    //@ts-ignore
+    assignValueToStore[zip] = zipData[zip];
+    //@ts-ignore
+    assignValueToStoreLog[zip] = Math.log2(zipData[zip]);
   });
 
   const heatValues = Object.values(assignValueToStoreLog);
@@ -51,7 +48,7 @@ export const createHeatLayer = (series: Frame[]) => {
 
   const polygons: Feature[] = [];
 
-  stores.map((zip) => {
+  Object.keys(zipData).map((zip) => {
     if (zip in zip_polygons) {
       const percentage = (assignValueToStoreLog[zip] - min) / range;
       polygons.push(
@@ -63,19 +60,6 @@ export const createHeatLayer = (series: Frame[]) => {
       );
     }
   });
-
-  // geojson.features.map((feature) => {
-  //   if (feature.properties && feature.properties.name && stores.includes(feature.properties.name)) {
-  //     const percentage = (assignValueToStoreLog[feature.properties.name] - min) / range;
-  //     polygons.push(
-  //       createPolygon(
-  //         feature,
-  //         assignValueToStore[feature.properties.name].toString(),
-  //         range != 0 ? percentageToHsl(percentage) : 'hsla(49, 100%, 50%, 0.3)'
-  //       )
-  //     );
-  //   }
-  // });
 
   return new VectorLayer({
     source: new VectorSource({
