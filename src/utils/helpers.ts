@@ -32,11 +32,13 @@ const createPolygon = (coordinates: number[][][], value: string, color: string) 
 
 export const createHeatLayer = () => {
   const assignValueToStore: { [key: string]: number } = {};
+  const total = Object.values(zipData).reduce((sum, i) => sum + i, 0);
+
   const assignValueToStoreLog: { [key: string]: number } = {};
 
   Object.keys(zipData).map((zip) => {
     //@ts-ignore
-    assignValueToStore[zip] = zipData[zip];
+    assignValueToStore[zip] = (zipData[zip] * 100) / total;
     //@ts-ignore
     assignValueToStoreLog[zip] = Math.log2(zipData[zip]);
   });
@@ -54,7 +56,7 @@ export const createHeatLayer = () => {
       polygons.push(
         createPolygon(
           zip_polygons[zip as ZipKey],
-          assignValueToStore[zip].toString(),
+          assignValueToStore[zip].toFixed(2) + ' %',
           range != 0 ? percentageToHsl(percentage) : 'hsla(49, 100%, 50%, 0.3)'
         )
       );

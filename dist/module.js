@@ -52891,10 +52891,13 @@ var createPolygon = function createPolygon(coordinates, value, color) {
 
 var createHeatLayer = function createHeatLayer() {
   var assignValueToStore = {};
+  var total = Object.values(_zipdata__WEBPACK_IMPORTED_MODULE_6__["default"]).reduce(function (sum, i) {
+    return sum + i;
+  }, 0);
   var assignValueToStoreLog = {};
   Object.keys(_zipdata__WEBPACK_IMPORTED_MODULE_6__["default"]).map(function (zip) {
     //@ts-ignore
-    assignValueToStore[zip] = _zipdata__WEBPACK_IMPORTED_MODULE_6__["default"][zip]; //@ts-ignore
+    assignValueToStore[zip] = _zipdata__WEBPACK_IMPORTED_MODULE_6__["default"][zip] * 100 / total; //@ts-ignore
 
     assignValueToStoreLog[zip] = Math.log2(_zipdata__WEBPACK_IMPORTED_MODULE_6__["default"][zip]);
   });
@@ -52906,7 +52909,7 @@ var createHeatLayer = function createHeatLayer() {
   Object.keys(_zipdata__WEBPACK_IMPORTED_MODULE_6__["default"]).map(function (zip) {
     if (zip in _zipcode__WEBPACK_IMPORTED_MODULE_7__["zip_polygons"]) {
       var percentage = (assignValueToStoreLog[zip] - min) / range;
-      polygons.push(createPolygon(_zipcode__WEBPACK_IMPORTED_MODULE_7__["zip_polygons"][zip], assignValueToStore[zip].toString(), range != 0 ? percentageToHsl(percentage) : 'hsla(49, 100%, 50%, 0.3)'));
+      polygons.push(createPolygon(_zipcode__WEBPACK_IMPORTED_MODULE_7__["zip_polygons"][zip], assignValueToStore[zip].toFixed(2) + ' %', range != 0 ? percentageToHsl(percentage) : 'hsla(49, 100%, 50%, 0.3)'));
     }
   });
   return new ol_layer__WEBPACK_IMPORTED_MODULE_1__["Vector"]({
