@@ -56,7 +56,7 @@ export const createHeatLayer = () => {
       polygons.push(
         createPolygon(
           zip_polygons[zip as ZipKey],
-          assignValueToStore[zip].toFixed(2) + ' %',
+          `${zip} - ${assignValueToStore[zip].toFixed(2)} %`,
           range != 0 ? percentageToHsl(percentage) : 'hsla(49, 100%, 50%, 0.3)'
         )
       );
